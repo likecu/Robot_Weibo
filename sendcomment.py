@@ -46,7 +46,7 @@ def send_comment(msg_id, msg):
     # print(msg)
 
 
-debug = True
+debug = False
 
 
 def debugger_point(**kwargs):
