@@ -1,0 +1,32 @@
+{
+    "user_id_list": "user_id_list.txt",
+    "only_crawl_original": 1,
+    "since_date": "1900-01-01",
+    "start_page": 1,
+    "write_mode": [
+        "mysql"
+    ],
+    "original_pic_download": 0,
+    "retweet_pic_download": 0,
+    "original_video_download": 0,
+    "retweet_video_download": 0,
+    "download_comment": 1,
+    "comment_max_download_count": 100,
+    "download_repost": 1,
+    "repost_max_download_count": 100,
+    "user_id_as_folder_name": 0,
+    "remove_html_tag": 1,
+    "cookie": "your cookie ",
+    "mysql_config": {
+        "host": "192.168.123.11",
+        "port": 3306,
+        "user": "root",
+        "password": "qwe12345",
+        "charset": "utf8mb4"
+    },
+    "mongodb_URI": "mongodb://[username:password@]host[:port][/[defaultauthdb][?options]]",
+    "api_key": "your key in chatglm.com",
+    "sleep_range_begin": 1,
+    "sleep_range_end": 2,
+    "sleep_range_large": 10
+}
