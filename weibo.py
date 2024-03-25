@@ -951,7 +951,7 @@ class Weibo(object):
             error = True
 
         if error:
-            # 最大好像只能有50条 TODO: improvement
+            # 最大好像只能有50条
             self._get_weibo_comments_nocookie(weibo, 0, max_count, 1, on_downloaded)
             return
 
@@ -1186,7 +1186,6 @@ class Weibo(object):
                                         )
                                     return True
                                 # 上一次标记的微博被删了，就把上一条微博时间记录推前两天，多抓点评论或者微博内容修改
-                                # TODO 更加合理的流程是，即使读取到上次更新微博id，也抓取增量评论，由此获得更多的评论
                                 since_date = datetime.strptime(
                                     convert_to_days_ago(self.last_weibo_date, 1),
                                     DTFORMAT,

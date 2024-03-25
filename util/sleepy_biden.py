@@ -3,6 +3,8 @@ import time
 import config_helper
 import random
 
+import save_sql
+
 
 def sleepy_biden(**kwargs):
     begin = config_helper.get_config().get("sleep_range_begin")
@@ -11,6 +13,4 @@ def sleepy_biden(**kwargs):
 
 
 def sleepy_biden_long():
-    begin = config_helper.get_config().get("sleep_range_begin")
-    large = config_helper.get_config().get("sleep_range_end")
-    time.sleep(random.randint(begin, large))
+    time.sleep(int(save_sql.query("time")))
