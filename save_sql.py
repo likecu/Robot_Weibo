@@ -16,7 +16,7 @@ def get_database_cursor():
     return connection, cursor
 
 
-def insert(user_id, user_name, user_comment, robot_result, comment_id):
+def save_robot_comment(user_id, user_name, user_comment, robot_result, comment_id):
     connection, cursor = get_database_cursor()
 
     # 定义要插入的数据
@@ -43,6 +43,17 @@ def insert(user_id, user_name, user_comment, robot_result, comment_id):
     # 关闭游标和连接
     cursor.close()
     connection.close()
+
+
+def get_comment_count(config_name) -> int:
+    connection, cur = get_database_cursor()
+    query_sql = f"SELECT count(*) FROM weibo.robot WHERE comment_id='{config_name}'"
+    cur.execute(query_sql)
+    rows = cur.fetchall()
+    try:
+        return rows[0][0]
+    except IndexError:
+        return 0
 
 
 def query(config_name):

@@ -52,8 +52,12 @@ debug = False
 def debugger_point(**kwargs):
     # for key, value in kwargs.items():
     # print(f"{key}: {value}")
-    result = glm.creat_comment(kwargs.get("wb")["text"], 1)
-    save_sql.insert(kwargs.get("wb")["user_id"], kwargs.get("wb")["screen_name"], kwargs.get("wb")["text"], result,
-                    kwargs.get("wb")["id"])
-    if not debug:
-        send_comment(kwargs.get("wb")["id"], result)
+    # 判断是否有记录
+    if save_sql.get_comment_count(kwargs.get("wb")["id"]) == 0:
+        # 如果有记录,则调用接口
+        result = glm.creat_comment(kwargs.get("wb")["text"], 1)
+
+        save_sql.save_robot_comment(kwargs.get("wb")["user_id"], kwargs.get("wb")["screen_name"], kwargs.get("wb")["text"], result,
+                                    kwargs.get("wb")["id"])
+        if not debug:
+            send_comment(kwargs.get("wb")["id"], result)
