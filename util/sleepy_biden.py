@@ -6,7 +6,7 @@ import random
 import save_sql
 
 
-def sleepy_biden(i):
+def sleepy_biden(**kwargs):
     begin = int(save_sql.query("sleep_range_begin"))
     end = int(save_sql.query("sleep_range_end"))
     sleep_time = random.randint(begin, end)
