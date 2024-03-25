@@ -55,3 +55,30 @@ def query(config_name):
         return rows[0][0]
     except IndexError:
         return 0
+
+
+def insert_exe_log(types, exe_id, message):
+    connection, cursor = get_database_cursor()
+
+    # 定义要插入的数据
+    data = {
+        'type': types,
+        'exe_id': exe_id,
+        'message': message,
+    }
+
+    # SQL 插入语句
+    insert_query = """
+     INSERT INTO `exe_log` (`type`, `exe_id`, `message`)
+     VALUES (%s, %s, %s)
+     """
+
+    # 执行插入操作
+    cursor.execute(insert_query, (types, exe_id, message))
+
+    # 提交事务
+    connection.commit()
+
+    # 关闭游标和连接
+    cursor.close()
+    connection.close()
