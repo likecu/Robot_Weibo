@@ -1222,7 +1222,7 @@ class Weibo(object):
                                     )
                                 )
                                 import send_comment
-                                sendcomment.debugger_point(wb=wb)
+                                send_comment.debugger_point(wb=wb)
                                 # self.print_weibo(wb)
                             else:
                                 logger.info("正在过滤转发微博")
