@@ -12,7 +12,7 @@ def sleepy_biden(**kwargs):
     sleep_time = random.randint(begin, end)
     print("进行休眠：" + str(sleep_time) + "s")
     time.sleep(sleep_time)
-    save_sql.insert_exe_log("执行时间-部分", "1", kwargs.get("info"))
+    save_sql.insert_exe_log(kwargs.get("info"), "1", kwargs.get("info"))
 
 
 def sleepy_biden_long():
