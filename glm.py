@@ -22,7 +22,7 @@ def creat_comment(msg: str, count: int) -> str:
             },
             {
                 "role": "user",
-                "content": "请使用一句中文来评论你的一个好朋友发的微博：" + msg
+                "content": "请使用一句中文来评论你的一个好朋友发的微博,且含有适当的emoji表情：" + msg
             }
         ],
         top_p=0.7,
