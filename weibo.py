@@ -16,7 +16,7 @@ import warnings
 from collections import OrderedDict
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from time import sleep
+
 
 import requests
 from lxml import etree
@@ -28,6 +28,8 @@ from config_helper import get_config
 from util import csvutil
 from util.dateutil import convert_to_days_ago
 from util.notify import push_deer
+
+from util.sleepy_biden import sleepy_biden as sleep
 
 warnings.filterwarnings("ignore")
 
@@ -358,10 +360,7 @@ class Weibo(object):
         # 这里在读取下一个用户的时候很容易被ban，需要优化休眠时长
         # 加一个count，不需要一上来啥都没干就sleep
         if self.long_sleep_count_before_each_user > 0:
-            sleep_time = 1
-            # 添加log，否则一般用户不知道以为程序卡了
-            logger.info(f"""短暂sleep {sleep_time}秒，避免被ban""")
-            sleep(sleep_time)
+
             logger.info("sleep结束")
         self.long_sleep_count_before_each_user = self.long_sleep_count_before_each_user + 1
 
@@ -1961,7 +1960,7 @@ class Weibo(object):
                     # 制会自动解除)，加入随机等待模拟人的操作，可降低被系统限制的风险。默
                     # 认是每爬取1到5页随机等待6到10秒，如果仍然被限，可适当增加sleep时间
                     if (page - page1) % random_pages == 0 and page < page_count:
-                        sleep(1)
+                        sleep()
                         page1 = page
                         random_pages = random.randint(1, 5)
 
