@@ -42,6 +42,7 @@ def send_comment(msg_id, msg):
     }
 
     response = requests.post(url, headers=headers, data=data)
+    save_sql.insert_exe_log("评论执行成功", msg_id, response.text)
     # print(response.text)
     # print(msg)
 
@@ -57,7 +58,10 @@ def debugger_point(**kwargs):
         # 如果有记录,则调用接口
         result = glm.creat_comment(kwargs.get("wb")["text"], 1)
 
-        save_sql.save_robot_comment(kwargs.get("wb")["user_id"], kwargs.get("wb")["screen_name"], kwargs.get("wb")["text"], result,
+        save_sql.save_robot_comment(kwargs.get("wb")["user_id"], kwargs.get("wb")["screen_name"],
+                                    kwargs.get("wb")["text"], result,
                                     kwargs.get("wb")["id"])
         if not debug:
             send_comment(kwargs.get("wb")["id"], result)
+
+
