@@ -17,7 +17,6 @@ from collections import OrderedDict
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-
 import requests
 from lxml import etree
 from requests.adapters import HTTPAdapter
@@ -29,7 +28,7 @@ from util import csvutil
 from util.dateutil import convert_to_days_ago
 from util.notify import push_deer
 
-from util.sleepy_biden import sleepy_biden as sleep
+from util.sleepy_biden import sleepy_biden as sleep, sleepy_biden_long, sleepy_biden_long_long
 
 warnings.filterwarnings("ignore")
 
@@ -366,7 +365,9 @@ class Weibo(object):
         js, status_code = self.get_json(params)
         if status_code != 200:
             logger.info("被ban了，需要等待一段时间")
-            sys.exit()
+            import save_sql
+            save_sql.insert_exe_log("被ban了", "1", js)
+            sleepy_biden_long_long()
         if js["ok"]:
             info = js["data"]["userInfo"]
             user_info = OrderedDict()
@@ -2032,9 +2033,6 @@ class Weibo(object):
                     self.update_user_config_file(self.user_config_file_path)
         except Exception as e:
             logger.exception(e)
-
-
-
 
 
 def main():
