@@ -3,6 +3,7 @@ import json
 import requests
 import glm
 import save_sql
+from notify import push_deer
 
 
 def send_comment(msg_id, msg):
@@ -43,6 +44,7 @@ def send_comment(msg_id, msg):
 
     response = requests.post(url, headers=headers, data=data)
     save_sql.insert_exe_log("评论执行成功", msg_id, response.text)
+    push_deer("评论执行成功"+msg_id+msg+response.text)
     # print(response.text)
     # print(msg)
 
