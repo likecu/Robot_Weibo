@@ -1879,28 +1879,7 @@ class Weibo(object):
 
     def update_user_config_file(self, user_config_file_path):
         """更新用户配置文件"""
-        with open(user_config_file_path, "rb") as f:
-            try:
-                lines = f.read().splitlines()
-                lines = [line.decode("utf-8-sig") for line in lines]
-            except UnicodeDecodeError:
-                logger.error("%s文件应为utf-8编码，请先将文件编码转为utf-8再运行程序", user_config_file_path)
-                sys.exit()
-            for i, line in enumerate(lines):
-                info = line.split(" ")
-                if len(info) > 0 and info[0].isdigit():
-                    if self.user_config["user_id"] == info[0]:
-                        if len(info) == 1:
-                            info.append(self.user["screen_name"])
-                            info.append(self.start_date)
-                        if len(info) == 2:
-                            info.append(self.start_date)
-                        if len(info) > 2:
-                            info[2] = self.start_date
-                        lines[i] = " ".join(info)
-                        break
-        with codecs.open(user_config_file_path, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines))
+        save_sql.WeiboDatabase.update_since_date(self.user_config["user_id"], self.start_date)
 
     def write_data(self, wrote_count):
         """将爬到的信息写入文件或数据库"""
@@ -2018,7 +1997,7 @@ class Weibo(object):
                     self.get_pages()
                 logger.info("信息抓取完毕")
                 logger.info("*" * 100)
-                if self.user_config_file_path and self.user:
+                if self.user:
                     self.update_user_config_file(self.user_config_file_path)
         except Exception as e:
             logger.exception(e)

@@ -1,5 +1,6 @@
 import pymysql
 
+
 class WeiboDatabase:
     @staticmethod
     def get_database_cursor():
@@ -114,6 +115,33 @@ class WeiboDatabase:
             # 关闭游标和连接
             cursor.close()
             connection.close()
+
+    @staticmethod
+    def update_since_date(user_id, new_since_date):
+        connection, cursor = WeiboDatabase.get_database_cursor()
+        try:
+            # SQL 更新语句
+            update_query = """
+               UPDATE user
+               SET since_date = %s
+               WHERE id = %s
+               """
+            # 执行更新操作
+            cursor.execute(update_query, (new_since_date, user_id))
+
+            # 提交事务
+            connection.commit()
+
+            # 返回影响的行数
+            return cursor.rowcount
+        except pymysql.MySQLError as e:
+            print(f"数据库操作出错：{e}")
+            return 0
+        finally:
+            # 关闭游标和连接
+            cursor.close()
+            connection.close()
+
 
 # 使用示例
 if __name__ == "__main__":
