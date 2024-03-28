@@ -23,6 +23,7 @@ from requests.adapters import HTTPAdapter
 from tqdm import tqdm
 
 import const
+import save_sql
 from config_helper import get_config
 from util import csvutil
 from util.dateutil import convert_to_days_ago
@@ -366,7 +367,7 @@ class Weibo(object):
         if status_code != 200:
             logger.info("被ban了，需要等待一段时间")
             import save_sql
-            save_sql.insert_exe_log("被ban了", "1", js)
+            save_sql.WeiboDatabase.insert_exe_log("被ban了", "1", js)
             sleepy_biden_long_long()
         if js["ok"]:
             info = js["data"]["userInfo"]
@@ -1970,41 +1971,29 @@ class Weibo(object):
 
     def get_user_config_list(self, file_path):
         """获取文件中的微博id信息"""
-        with open(file_path, "rb") as f:
-            try:
-                lines = f.read().splitlines()
-                lines = [line.decode("utf-8-sig") for line in lines]
-            except UnicodeDecodeError:
-                logger.error("%s文件应为utf-8编码，请先将文件编码转为utf-8再运行程序", file_path)
+        lines = save_sql.WeiboDatabase.get_user_id_since_date()
+        user_config_list = []
+        # 分行解析配置，添加到user_config_list
+        for line in lines:
+            user_config = {}
+            user_config["user_id"] = line.get("id")
+            # 根据配置文件行的字段数确定 since_date 的值
+            if line.get("since_date") is None:
+                user_config["since_date"] = (date.today() - timedelta(1)).strftime(DTFORMAT)
+            elif self.is_datetime(line.get("since_date")):
+                user_config["since_date"] = line.get("since_date")
+            elif self.is_date(line.get("since_date")):
+                user_config["since_date"] = "{}T00:00:00".format(line.get("since_date"))
+            elif line.get("since_date").isdigit():
+                since_date = date.today() - timedelta(int(line.get("since_date")))
+                user_config["since_date"] = since_date.strftime(DTFORMAT)
+            else:
+                logger.error("since_date 格式不正确，请确认配置是否正确")
                 sys.exit()
-            user_config_list = []
-            # 分行解析配置，添加到user_config_list
-            for line in lines:
-                info = line.strip().split(" ")  # 去除字符串首尾空白字符
-                if len(info) > 0 and info[0].isdigit():
-                    user_config = {}
-                    user_config["user_id"] = info[0]
-                    # 根据配置文件行的字段数确定 since_date 的值
-                    if len(info) == 3:
-                        if self.is_datetime(info[2]):
-                            user_config["since_date"] = info[2]
-                        elif self.is_date(info[2]):
-                            user_config["since_date"] = "{}T00:00:00".format(info[2])
-                        elif info[2].isdigit():
-                            since_date = date.today() - timedelta(int(info[2]))
-                            user_config["since_date"] = since_date.strftime(DTFORMAT)
-                        else:
-                            logger.error("since_date 格式不正确，请确认配置是否正确")
-                            sys.exit()
-                    else:
-                        user_config["since_date"] = self.since_date
-                    # 若超过3个字段，则第四个字段为 query_list                    
-                    if len(info) > 3:
-                        user_config["query_list"] = info[3].split(",")
-                    else:
-                        user_config["query_list"] = self.query_list
-                    if user_config not in user_config_list:
-                        user_config_list.append(user_config)
+            user_config["query_list"] = self.query_list
+            if user_config not in user_config_list:
+                user_config_list.append(user_config)
+
         return user_config_list
 
     def initialize_info(self, user_config):
